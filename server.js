@@ -1,5 +1,5 @@
 var http = require ('http');            // For serving a basic web page.
-var mongoose = require ("mongoose"); 	// The reason for this demo.
+var mongoose = require ("mongoose");  // The reason for this demo.
 var querystring = require('querystring');
 var utils = require('utils');
 
@@ -41,54 +41,82 @@ http.createServer(function (req, res) {
       // append the current chunk of data to the fullBody variable
       fullBody += chunk.toString();
     });
-    
+
     req.on('end', function() {
-    
+
       // request ended -> do something with the data
       res.writeHead(200, "OK", {'Content-Type': 'text/html'});
       
+      console.log(fullBody);
       // parse the received body data
-      var decodedBody = querystring.parse(fullBody);
+      var decodedBody = JSON.parse(fullBody);
       console.log(decodedBody);
- 
+
+      var user = getOrCreateUser(decodedBody.user_id, decodedBody.name, function(user){
+
+
+        var responseBody;
+        if(user.justCreated){
+          responseBody = { text : 'Bienvenue ' + user.name };
+        }else{
+          var target = findTarget(req.text);
+          var amount = findAmount(req.text);
+          responseBody = { text : 'Donné ' + amount + ' à ' +target.name };
+        }
+
+        res.writeHead(200, {'Content-Type': 'application/json'});
+        res.end( JSON.stringify(responseBody) );
+
+      });
+
     });
-
-
-    var user = getOrCreateUser(req.user_id);
-
-  	var responseBody = { text : 'ça marche !' };
-
-  	res.writeHead(200, {'Content-Type': 'application/json'});
-  	res.end( JSON.stringify(responseBody) );
-
-
 
 }).listen(theport, '127.0.0.1');
 
 console.log('Server running at http://127.0.0.1:8080/');
 
+var findTarget = function(text){
+  var target_id = str.match(/\<@(.*)\>/).pop();
+  User.find({ slack_id: target_id}, function(err, users){
+    console.log(users);
+    return users[0];
+  });
+  
+}
+
+var findAmount = function(text){
+  var numbers = text.match(/\\d+\\.?\\d*/g);
+  console.log(numbers);
+  return numbers[0];
+}
 
 
 
+var getOrCreateUser = function(user_id, name, callback){
 
-
-var getOrCreateUser = function(user_id, name){
+  console.log(user_id);
 
   User.find({ slack_id: user_id}, function(err, users){
+  console.log(user_id);
   
     if (err) return console.error(err);
 
+    var user;
     if (users.length == 0)
     {
-      var user = new User({ slack_id: user_id, name: name });
+      user = new User({ slack_id: user_id, name: name });
       user.save();
-      return user;
+      user.justCreated = true;
     } 
 
     else
     {
-      return users[0];
+      user = users[0];
+      user.justCreated = false;
     }
+    console.log(user);
+
+    callback(user);
 
   });
 
