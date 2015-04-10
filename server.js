@@ -63,6 +63,8 @@ http.createServer(function (req, res) {
       // parse the received body data
       var decodedBody = querystring.parse(fullBody);
 
+      console.log(decodedBody);
+
       var responseBody;
       if(decodedBody.token != slack_token)
       {
