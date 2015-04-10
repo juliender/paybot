@@ -62,6 +62,7 @@ http.createServer(function (req, res) {
       
       // parse the received body data
       var decodedBody = querystring.parse(fullBody);
+        console.log(decodedBody);
 
       var responseBody;
       if(decodedBody.token != slack_token)
@@ -76,6 +77,7 @@ http.createServer(function (req, res) {
       // Create the user if does not exists, or find him in DB 
       var user = getOrCreateUser(decodedBody.user_id, decodedBody.user_name, function(user){
 
+        console.log(user);
         if(user.justCreated)
         {
         
@@ -90,6 +92,8 @@ http.createServer(function (req, res) {
             responseBody = { text : 'Vous devez commencer par " bangs: hi " ' };
           }
 
+          console.log('early return');
+
           res.writeHead(200, {'Content-Type': 'application/json'});
           res.end( JSON.stringify(responseBody) );
 
@@ -98,8 +102,13 @@ http.createServer(function (req, res) {
           // First find for who is the money
           findTarget(decodedBody.text, function(target){
 
+            console.log(target);
+
             if(target == null)
             {
+            
+              console.log('target null');
+
               responseBody = { text : 'Le destinataire n\'existe pas ou n\'a pas dit "bangs: hi" ' };
               res.writeHead(200, {'Content-Type': 'application/json'});
               res.end( JSON.stringify(responseBody) );
@@ -110,8 +119,13 @@ http.createServer(function (req, res) {
             var amount = findAmount(decodedBody.text);
             amount = parseInt(amount);
 
+            console.log(target);
+
             if(amount == null)
             {
+
+              console.log('amount null');
+
               responseBody = { text : 'Vous devez préciser la somme dans votre message !' };
               res.writeHead(200, {'Content-Type': 'application/json'});
               res.end( JSON.stringify(responseBody) );
@@ -122,8 +136,13 @@ http.createServer(function (req, res) {
             var op = new Operation({ slack_id_sender: user.slack_id, slack_id_receiver: target.slack_id, amount: amount  });
             op.save();
 
+
+
               processBank(user, function(user_bank){
                 processBank(target, function(target_bank){
+
+              console.log(user_bank);
+              console.log(target_bank);
 
                   responseBody = { text : 'Bangs envoyés ! ' + amount + ' à ' +target.name + '\n'+ user.name +':' + user_bank+ ' bangs\n'+ target.name+':' + target_bank + ' bangs' };
 
