@@ -111,8 +111,8 @@ http.createServer(function (req, res) {
               responseBody = { text : 'Votre banque : ' + user_bank + ' bangs' };
               res.writeHead(200, {'Content-Type': 'application/json'});
               res.end( JSON.stringify(responseBody) );
-              return;
             });
+            return;
           }
 
           // First find for who is the money
