@@ -153,11 +153,22 @@ console.log('Server running at http://127.0.0.1:'+port);
 
 // Find mentionned user to receive funds
 var findTarget = function(text, callback){
-  var target_id = text.match(/\<@(.*)\>/).pop();
+  var target_ids = text.match(/\<@(.*)\>/);
+
+  var target_id;
+  if(target_ids.length > 0)
+  {
+
+    target_id = target_ids.pop();
+    
     User.find({ slack_id: target_id}, function(err, users){
-    callback(users[0]);
-  });
-  
+      callback(users[0]);
+    });
+  }
+  else
+  {
+    callback(null);
+  } 
 }
 
 // Find amount to send
