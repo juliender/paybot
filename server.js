@@ -174,7 +174,18 @@ var processBank = function(user, callback){
     Operation.aggregate({ $group: { _id:{ slack_id_receiver: user.slack_id } , total: {$sum: "$amount"} } } 
        , function(err, receivers){
         console.log(receivers);
-        callback(receivers[0].total - senders[0].total);
+        var received = 0; 
+        if(receivers.length > 0)
+        {
+            received = receivers[0].total;
+        }
+
+        var sent = 0; 
+        if(senders.length > 0)
+        {
+            sent = senders[0].total;
+        }
+        callback( received - sent );
     });
   });
 
