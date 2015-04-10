@@ -79,6 +79,8 @@ http.createServer(function (req, res) {
         if(user.justCreated)
         {
         
+
+        //TODO : prevent an exchange to be catched here if the message contains hi
           if ( decodedBody.text.indexOf("hi") > -1)
           {
             responseBody = { text : 'Bienvenue ' + user.name + ' !' };
@@ -98,9 +100,10 @@ http.createServer(function (req, res) {
 
             if(target == null)
             {
-              responseBody = { text : 'Le destinatair n\'existe pas ou n\'a pas dit "bangs: hi" ' };
+              responseBody = { text : 'Le destinataire n\'existe pas ou n\'a pas dit "bangs: hi" ' };
               res.writeHead(200, {'Content-Type': 'application/json'});
               res.end( JSON.stringify(responseBody) );
+              return;
             }
 
             // Second find how many
@@ -112,6 +115,7 @@ http.createServer(function (req, res) {
               responseBody = { text : 'Vous devez préciser la somme dans votre message !' };
               res.writeHead(200, {'Content-Type': 'application/json'});
               res.end( JSON.stringify(responseBody) );
+              return;
             }
 
             // Finally save the bank operation in DB and display updated funds. 
