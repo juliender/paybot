@@ -6,7 +6,7 @@ var querystring = require('querystring');
 // port 5000.
 var port = process.env.PORT || 5000;
 
-
+var slack_token = process.env.SLACK_TOKEN;
 
 
 /***************** DATABASE CONNEXION AND INITIALIZATION ****************/
@@ -63,28 +63,65 @@ http.createServer(function (req, res) {
       // parse the received body data
       var decodedBody = querystring.parse(fullBody);
 
+      var responseBody;
+      if(decodedBody.token != slack_token)
+      {
+          responseBody = { text : ' Authentication error : wrong token ' };
+          res.writeHead(200, {'Content-Type': 'application/json'});
+          res.end( JSON.stringify(responseBody) );
+          return;
+      }
+
+
+      // Create the user if does not exists, or find him in DB 
       var user = getOrCreateUser(decodedBody.user_id, decodedBody.user_name, function(user){
 
-        var responseBody;
-        if(user.justCreated){
-          responseBody = { text : 'Bienvenue ' + user.name };
+        if(user.justCreated)
+        {
+        
+          if ( decodedBody.text.indexOf("hi") > -1)
+          {
+            responseBody = { text : 'Bienvenue ' + user.name + ' !' };
+          }
+          else
+          {
+            responseBody = { text : 'Vous devez commencer par " bangs: hi " ' };
+          }
 
           res.writeHead(200, {'Content-Type': 'application/json'});
           res.end( JSON.stringify(responseBody) );
 
         }else{
-          findTarget(decodedBody.text, function(target){
-            var amount = findAmount(decodedBody.text);
 
+          // First find for who is the money
+          findTarget(decodedBody.text, function(target){
+
+            if(target == null)
+            {
+              responseBody = { text : 'Le destinatair n\'existe pas ou n\'a pas dit "bangs: hi" ' };
+              res.writeHead(200, {'Content-Type': 'application/json'});
+              res.end( JSON.stringify(responseBody) );
+            }
+
+            // Second find how many
+            var amount = findAmount(decodedBody.text);
             amount = parseInt(amount);
 
+            if(amount == null)
+            {
+              responseBody = { text : 'Vous devez préciser la somme dans votre message !' };
+              res.writeHead(200, {'Content-Type': 'application/json'});
+              res.end( JSON.stringify(responseBody) );
+            }
+
+            // Finally save the bank operation in DB and display updated funds. 
             var op = new Operation({ slack_id_sender: user.slack_id, slack_id_receiver: target.slack_id, amount: amount  });
             op.save();
 
               processBank(user, function(user_bank){
                 processBank(target, function(target_bank){
 
-                  responseBody = { text : 'Donné ' + amount + ' à ' +target.name + '\n'+ user.name +':' + user_bank+ '\n'+ target.name+':' + target_bank };
+                  responseBody = { text : 'Bangs envoyés ! ' + amount + ' à ' +target.name + '\n'+ user.name +':' + user_bank+ ' bangs\n'+ target.name+':' + target_bank + ' bangs' };
 
                   res.writeHead(200, {'Content-Type': 'application/json'});
                   res.end( JSON.stringify(responseBody) );
@@ -105,6 +142,12 @@ http.createServer(function (req, res) {
 
 console.log('Server running at http://127.0.0.1:'+port);
 
+
+
+/********************** HELPERS *********************/
+
+
+// Find mentionned user to receive funds
 var findTarget = function(text, callback){
   var target_id = text.match(/\<@(.*)\>/).pop();
     User.find({ slack_id: target_id}, function(err, users){
@@ -113,11 +156,13 @@ var findTarget = function(text, callback){
   
 }
 
+// Find amount to send
 var findAmount = function(text){
   var numbers = text.match(/\d+/);
   return numbers[0];
 }
 
+// Current bank of a user
 var processBank = function(user, callback){
   Operation.aggregate({ $group: { _id:{ slack_id_sender: user.slack_id } , total: {$sum: "$amount"} } } 
    , function(err, senders){
@@ -132,16 +177,17 @@ var processBank = function(user, callback){
 }
 
 
-var getOrCreateUser = function(user_id, name, callback){
+// Find a user givenn it's slack_id
+var getOrCreateUser = function(slack_id, name, callback){
 
-  User.find({ slack_id: user_id}, function(err, users){
+  User.find({ slack_id: slack_id}, function(err, users){
   
     if (err) return console.error(err);
 
     var user;
     if (users.length == 0)
     {
-      user = new User({ slack_id: user_id, name: name });
+      user = new User({ slack_id: slack_id, name: name });
       user.save();
       user.justCreated = true;
     } 
