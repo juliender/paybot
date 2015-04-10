@@ -99,11 +99,11 @@ http.createServer(function (req, res) {
 
         }else{
 
-          if(decodedBody.slack_id == 'USLACKBOT')
+          if(decodedBody.user_id == 'USLACKBOT')
           {
             return;
           }
-          
+
           // First find for who is the money
           findTarget(decodedBody.text, function(target){
 
