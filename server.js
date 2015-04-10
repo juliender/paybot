@@ -156,7 +156,7 @@ var findTarget = function(text, callback){
   var target_ids = text.match(/\<@(.*)\>/);
 
   var target_id;
-  if(target_ids.length > 0)
+  if(target_ids != null && target_ids.length > 0)
   {
 
     target_id = target_ids.pop();
