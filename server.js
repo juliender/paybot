@@ -215,12 +215,13 @@ var findAmount = function(text){
 // Current bank of a user
 var processBank = function(user, callback){
 
-  Operation.aggregate({ $group: { _id:{ slack_id_sender: user.slack_id } , total: {$sum: "$amount"} } } 
+   
+  Operation.aggregate( {  $match : {slack_id_sender : user.slack_id}     },     {  $group : { _id : "$slack_id_sender", total : { $sum : "$amount" } }     }
    , function(err, senders){
 
         console.log(senders);
 
-    Operation.aggregate({ $group: { _id:{ slack_id_receiver: user.slack_id } , total: {$sum: "$amount"} } } 
+    Operation.aggregate( {  $match : {slack_id_receiver : user.slack_id}     },     {  $group : { _id : "$slack_id_receiver", total : { $sum : "$amount" } }     }
        , function(err, receivers){
 
         console.log(receivers);
