@@ -79,6 +79,7 @@ http.createServer(function (req, res) {
         if(user.justCreated)
         {
         
+        //Case user says hi (wants to receive funds)
         //TODO : prevent an exchange to be catched here if the message contains hi
           if ( decodedBody.text.indexOf("hi") > -1)
           {
@@ -94,12 +95,14 @@ http.createServer(function (req, res) {
 
         }else{
 
+          //Exclude bot's messages
           if(decodedBody.user_id == 'USLACKBOT')
           {
             return;
           }
 
 
+          //Case user wants to know his own funds
           if(decodedBody.text.indexOf("me") > -1)
           {
             processBank(user, function(user_bank){
@@ -109,6 +112,8 @@ http.createServer(function (req, res) {
             });
             return;
           }
+
+          //Else : parse message to find transaction information : how much and for who.
 
           // First find for who is the money
           findTarget(decodedBody.text, function(target){
@@ -122,7 +127,7 @@ http.createServer(function (req, res) {
               return;
             }
 
-            // Second find how many
+            // Second find how much
             var amount = findAmount(decodedBody.text);
             amount = parseInt(amount);
 
