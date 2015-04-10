@@ -49,7 +49,6 @@ var Operation = mongoose.model('Operation', OperationSchema);
 
 http.createServer(function (req, res) {
     var fullBody = '';
-    console.log(decodedBody);
 
     req.on('data', function(chunk) {
       // append the current chunk of data to the fullBody variable
@@ -64,16 +63,14 @@ http.createServer(function (req, res) {
       // parse the received body data
       var decodedBody = querystring.parse(fullBody);
 
-      console.log(decodedBody);
-
       var responseBody;
-      // if(decodedBody.token != slack_token)
-      // {
-      //     responseBody = { text : ' Authentication error : wrong token ' };
-      //     res.writeHead(200, {'Content-Type': 'application/json'});
-      //     res.end( JSON.stringify(responseBody) );
-      //     return;
-      // }
+      if(decodedBody.token != slack_token)
+      {
+          responseBody = { text : ' Authentication error : wrong token ' };
+          res.writeHead(200, {'Content-Type': 'application/json'});
+          res.end( JSON.stringify(responseBody) );
+          return;
+      }
 
 
       // Create the user if does not exists, or find him in DB 
