@@ -44,9 +44,7 @@ var OperationSchema = new mongoose.Schema({
 var Operation = mongoose.model('Operation', OperationSchema);
 
 
-
 /***************** APPLICATION'S LOGIC ****************/
-
 http.createServer(function (req, res) {
     var fullBody = '';
 
@@ -59,14 +57,20 @@ http.createServer(function (req, res) {
 
       // parse the received body data
       var decodedBody = querystring.parse(fullBody);
+      handleRequest(decodedBody, res);
+    });
+
+}).listen(port);
+console.log('Server running at http://127.0.0.1:'+port);
+
+
+function handleRequest(decodedBody, res){
 
       if(decodedBody.token != slack_token)
       {
-
           response(res, ' Authentication error : wrong token ');
           return;
       }
-
 
       // Create the user if does not exists, or find him in DB 
       var user = getOrCreateUser(decodedBody.user_id, decodedBody.user_name, function(user){
@@ -134,9 +138,9 @@ http.createServer(function (req, res) {
               processBank(user, function(user_bank){
                 processBank(target, function(target_bank){
 
-                  var text = 'Bangs envoyés ! ' + amount + ' à ' +target.name + '\n';
-                  text += user.name +':' + user_bank+ ' bangs\n';
-                  text += target.name +':' + target_bank+ ' bangs\n';
+                  var text = amount + ' bangs envoyés à ' +target.name + ' !\n';
+                  text += 'Solde ' + user.name +':' + user_bank+ ' bangs\n';
+                  text += 'Solde ' + target.name +':' + target_bank+ ' bangs\n';
                   
                   response(res, text);
                 
@@ -150,13 +154,7 @@ http.createServer(function (req, res) {
         }
 
       });
-
-    });
-
-
-}).listen(port);
-
-console.log('Server running at http://127.0.0.1:'+port);
+}
 
 
 
