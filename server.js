@@ -57,18 +57,13 @@ http.createServer(function (req, res) {
 
     req.on('end', function() {
 
-      // request ended -> do something with the data
-      res.writeHead(200, "OK", {'Content-Type': 'text/html'});
-      
       // parse the received body data
       var decodedBody = querystring.parse(fullBody);
 
-      var responseBody;
       if(decodedBody.token != slack_token)
       {
-          responseBody = { text : ' Authentication error : wrong token ' };
-          res.writeHead(200, {'Content-Type': 'application/json'});
-          res.end( JSON.stringify(responseBody) );
+
+          response(res, ' Authentication error : wrong token ');
           return;
       }
 
@@ -106,9 +101,7 @@ http.createServer(function (req, res) {
           if(decodedBody.text.indexOf("me") > -1)
           {
             processBank(user, function(user_bank){
-              responseBody = { text : 'Votre banque : ' + user_bank + ' bangs' };
-              res.writeHead(200, {'Content-Type': 'application/json'});
-              res.end( JSON.stringify(responseBody) );
+              response(req, 'Votre banque : ' + user_bank + ' bangs' );
             });
             return;
           }
@@ -120,10 +113,7 @@ http.createServer(function (req, res) {
 
             if(target == null)
             {
-            
-              responseBody = { text : 'Le destinataire n\'existe pas ou n\'a pas dit "bangs: hi" ' };
-              res.writeHead(200, {'Content-Type': 'application/json'});
-              res.end( JSON.stringify(responseBody) );
+              response(req, 'Le destinataire n\'existe pas ou n\'a pas dit "bangs: hi" ' );
               return;
             }
 
@@ -133,9 +123,7 @@ http.createServer(function (req, res) {
 
             if(amount == null)
             {
-              responseBody = { text : 'Vous devez préciser la somme dans votre message !' };
-              res.writeHead(200, {'Content-Type': 'application/json'});
-              res.end( JSON.stringify(responseBody) );
+              response(req, 'Vous devez préciser la somme dans votre message !' );
               return;
             }
 
@@ -146,11 +134,11 @@ http.createServer(function (req, res) {
               processBank(user, function(user_bank){
                 processBank(target, function(target_bank){
 
-
-                    responseBody = { text : 'Bangs envoyés ! ' + amount + ' à ' +target.name + '\n'+ user.name +':' + user_bank+ ' bangs\n'+ target.name+':' + target_bank + ' bangs' };
-
-                    res.writeHead(200, {'Content-Type': 'application/json'});
-                    res.end( JSON.stringify(responseBody) );
+                  var text = 'Bangs envoyés ! ' + amount + ' à ' +target.name + '\n';
+                  text += user.name +':' + user_bank+ ' bangs\n';
+                  text += target.name +':' + target_bank+ ' bangs\n';
+                  
+                  response(res, text);
                 
                 });
 
@@ -173,7 +161,11 @@ console.log('Server running at http://127.0.0.1:'+port);
 
 
 /********************** HELPERS *********************/
-
+var response = function(res, text){
+  var responseBody = { text : text };
+  res.writeHead(200, {'Content-Type': 'application/json'});
+  res.end( JSON.stringify(responseBody) );
+}
 
 // Find mentionned user to receive funds
 var findTarget = function(text, callback){
