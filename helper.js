@@ -1,8 +1,9 @@
 module.exports = {
 
   response : function(res, text){
+    var responseBody = { text : text };
     res.writeHead(200, {'Content-Type': 'application/json'});
-    res.end( text );
+    res.end( JSON.stringify(responseBody) );
   },
 
   // Find mentionned user to receive funds
