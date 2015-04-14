@@ -1,3 +1,5 @@
+var models = require('./models.js');
+
 module.exports = {
 
   response : function(res, text){
@@ -16,7 +18,7 @@ module.exports = {
 
       target_id = target_ids.pop();
       
-      User.find({ slack_id: target_id}, function(err, users){
+      models.User.find({ slack_id: target_id}, function(err, users){
         callback(users[0]);
       });
     }
