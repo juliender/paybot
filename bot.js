@@ -69,7 +69,7 @@ exports.handleRequest = function (data, res) {
 				return;
 			}
 
-			if (data.command == null)
+			if (data.command != null)
 			{
 				helper.response(res, ' No slash for the message to be public ' );
 				return;
