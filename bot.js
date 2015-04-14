@@ -75,7 +75,7 @@ exports.handleRequest = function (data, res) {
 				return;
 			}
 
-			helper.processBank(user, function(user_bank){
+			models.processBank(user, function(user_bank){
 
 				if (user_bank < amount)
 				{
@@ -84,11 +84,11 @@ exports.handleRequest = function (data, res) {
 				}
 
 				// Finally save the bank operation in DB and display updated funds. 
-				var op = new Operation({ slack_id_sender: user.slack_id, slack_id_receiver: target.slack_id, amount: amount  });
+				var op = new models.Operation({ slack_id_sender: user.slack_id, slack_id_receiver: target.slack_id, amount: amount  });
 				op.save(function(){
 
-					helper.processBank(user, function(new_user_bank){
-						helper.processBank(target, function(target_bank){
+					models.processBank(user, function(new_user_bank){
+						models.processBank(target, function(target_bank){
 
 							var text = amount + ' bangs sent to ' +target.name + ' !\n';
 							text += user.name +':' + new_user_bank+ ' bangs\n';
