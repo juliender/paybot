@@ -33,12 +33,13 @@ var OperationSchema = new mongoose.Schema({
 });
 
 var User = mongoose.model('User', UserSchema);
+var Operation = mongoose.model('Operation', UserSchema);
 
 module.exports = {
 
   User : User,
 
-  Operation : mongoose.model('Operation', OperationSchema),
+  Operation : Operation,
 
   // Current bank of a user
   processBank : function(user, callback){
