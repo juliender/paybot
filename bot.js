@@ -70,7 +70,7 @@ exports.handleRequest = function (data, res) {
 
 			if (data.command != null)
 			{
-				helper.response(res, ' C''est bangs 100 @....  pas /bangs ' );
+				helper.response(res, ' C\'est bangs 100 @....  pas /bangs ' );
 				return;					
 			}
 
