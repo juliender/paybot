@@ -11,8 +11,8 @@ It creates a virtual account for each member and lets you pay each other.
 
 ## Connect to Slack
 In the "Integrations" settings of Slack : 
-- Add a Outcoming webhook connected to your heroku app http://myapp.herokuapp.com
-- Add a Slash command the same way
+- Add a Outcoming webhook connected to your heroku app http://myapp.herokuapp.com named _bangs_
+- Add Slash commands the same way : /hi, /mybangs and /allbangs
 
 ## Configure Slack tokens in Heroku
 - heroku config set:SLACK_TOKEN=your_slack_webhook_token
@@ -20,7 +20,7 @@ In the "Integrations" settings of Slack :
 
 # How to use the bot
 
-- bangs hi
+- /hi
 
  - If new user : "Welcome"
 
@@ -28,16 +28,16 @@ In the "Integrations" settings of Slack :
 
 - bangs 100 @bertran
 
- - If bertran did not say "bangs hi" (= not registered) : " Receiver did not said hi "
+ - If bertran did not say "/hi" (= not registered) : " Receiver did not said /hi "
 
  - If not enough funds : " you have 10, not enought to send 100"
 
  - Else : "100 bangs sent to bertran"
 
-- /bangs mybangs
+- /mybangs
 
  - your balance
 
-- /bangs all
+- /allbangs
 
  - List all users with their balances
