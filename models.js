@@ -35,6 +35,7 @@ var OperationSchema = new mongoose.Schema({
 var User = mongoose.model('User', UserSchema);
 var Operation = mongoose.model('Operation', UserSchema);
 
+/*************************** EXPORTS ****************************/
 module.exports = {
 
   User : User,

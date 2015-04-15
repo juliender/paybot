@@ -45,6 +45,13 @@ exports.handleRequest = function (data, res) {
 			return;
 		}
 
+		//If this is the slackbot talking and the message does not match the commands above : we are potentially catching the previous answer of the bot
+		//So display something only if the command is a valid transaction
+		var display_error = true;
+		if( data.user_id == 'USLACKBOT' )
+		{
+			display_error = false;
+		}
 
 		//Else : parse message to find transaction information : how much and for who.
 
@@ -55,29 +62,44 @@ exports.handleRequest = function (data, res) {
 			var amount = helper.findAmount(data.text);
 			amount = parseInt(amount);
 
-
-
+			var error = false;
 			if (amount == null)
 			{
-				response(res, 'This is not a right command, no amout in your message' );
-				return;
+				error = true;
+				if(display_error)
+				{
+					helper.response(res, 'This is not a right command, no amout in your message' );
+					return;					
+				}
 			}
 
 			if (target == null)
 			{
-				helper.response(res, 'Receiver does not exist or did not say " /bangs hi " ' );
-				return;
+				error = true;
+				if(display_error)
+				{
+					helper.response(res, 'Receiver does not exist or did not say " /bangs hi " ' );
+					return;					
+				}
 			}
 
 			if (data.command != null)
 			{
-				helper.response(res, ' No slash for the message to be public ' );
-				return;
+				error = true;
+				if(display_error)
+				{
+					helper.response(res, ' No slash for the message to be public ' );
+					return;					
+				}
 			}
 
+			//If we catched an error but still not displayed : this is a bot answer so return nothing 
+			if( error ) return;
+
+			// Else : process valid transaction
 			models.processBank(user, function(user_bank){
 
-				if (user_bank < amount)
+				if (user_bank < amount && data.user_id != 'USLACKBOT')
 				{
 					helper.response(res, 'You have ' + user_bank + ' bangs. Not enough to send ' + amount );
 					return;
@@ -98,7 +120,6 @@ exports.handleRequest = function (data, res) {
 
 						});
 					});
-
 
 				});
 			});
