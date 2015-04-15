@@ -39,6 +39,12 @@ exports.handleRequest = function (data, res) {
 		//If user wants to know his own funds
 		if (data.text.indexOf("mybangs") > -1)
 		{
+			if (data.command == null)
+			{
+				helper.response(res, ' Use /bangs mybangs to have this privately ' );
+				return;					
+			}
+
 			models.processBank(user, function(user_bank){
 				helper.response(res, 'You have : ' + user_bank + ' bangs' );
 			});
