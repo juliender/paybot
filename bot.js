@@ -9,19 +9,30 @@ exports.handleRequest = function (data, res) {
 	var user = models.getUser(data.user_id, data.user_name, function(user){	
 
 		//Case user says hi (wants to receive funds)
-		if ( data.text.indexOf("hi") > -1)
+		if ( data.command == '/hi')
 		{
 
 			if(user == null)
 			{
 				var user = models.createUser(data.user_id, data.user_name, function(user){
-					helper.response(res, 'Welcome ' + user.name + ' !'  );
+					helper.response(res, 'Bienvenue sur le Slack de la Tic Valley ! \n
+						Vous pouvez demander de l''aide et en donner dans les différents "Channels". \n
+						Le Bangs est la monnaie virtuelle de l''entraide à la tic valley ! \n
+						Pleins de cadeaux sont à gagner (Drone Parrot - balance withings etc...) pour les meilleurs contributeurs. \n
+						Comme vous êtes nouveaux nous vous créditons de 200 bangs !\n
+						\n
+						Voici la liste des différentes fonctions : \n
+						bangs 100 @bertran : Donne 100 bangs à bertran \n
+						/mybangs : Vous renvoie votre nombre de bangs \n
+						/allbangs : Renvoie le classement des bangs \n
+\n
+						Pour toutes questions contactez nous (sur slack hein ;-) ) @bertran @marion @julie @simon'  );
 				});
 			}
 
 			else
 			{
-				helper.response(res, 'You are already registered ' + user.name  );
+				helper.response(res, 'Vous êtes déjà inscrit :) ' );
 			}
 
 			return;
@@ -31,20 +42,14 @@ exports.handleRequest = function (data, res) {
 		// If another command but user not registered
 		if(user == null)
 		{
-			helper.response(res, 'You must say " /bangs hi " first' );
+			helper.response(res, 'Oulalala vous êtes pressé ! Commencez par dire : /hi ' );
 			return;
 		}
 
 
 		//If user wants to know his own funds
-		if (data.text.indexOf("mybangs") > -1)
+		if (data.command == '/mybangs')
 		{
-			if (data.command == null)
-			{
-				helper.response(res, ' Use /bangs mybangs to have this privately ' );
-				return;					
-			}
-
 			models.processBank(user, function(user_bank){
 				helper.response(res, 'You have : ' + user_bank + ' bangs' );
 			});
@@ -70,13 +75,13 @@ exports.handleRequest = function (data, res) {
 
 			if (target == null)
 			{
-				helper.response(res, 'Receiver does not exist or did not say " /bangs hi " ' );
+				helper.response(res, 'Olala il n''a pas encore utilisé de bangs, dites lui de dire /hi' );
 				return;					
 			}
 
 			if (data.command != null)
 			{
-				helper.response(res, ' No slash for the message to be public ' );
+				helper.response(res, ' C''est bangs 100 @....  pas /bangs ' );
 				return;					
 			}
 
@@ -84,7 +89,7 @@ exports.handleRequest = function (data, res) {
 
 				if (user_bank < amount)
 				{
-					helper.response(res, 'You have ' + user_bank + ' bangs. Not enough to send ' + amount );
+					helper.response(res, 'Tu as ' + user_bank + ' bangs. Pas assez pour envoyer ' + amount + ' !' );
 					return;
 				}
 
@@ -94,7 +99,7 @@ exports.handleRequest = function (data, res) {
 					models.processBank(user, function(new_user_bank){
 						models.processBank(target, function(target_bank){
 
-							var text = amount + ' bangs sent to ' +target.name + ' !\n';
+							var text = amount + ' bangs envoyés à ' +target.name + ' !\n';
 							text += user.name +': ' + new_user_bank+ ' bangs\n';
 							text += target.name +': ' + target_bank+ ' bangs\n';
 
