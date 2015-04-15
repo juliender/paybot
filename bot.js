@@ -64,7 +64,7 @@ exports.handleRequest = function (data, res) {
 
 			if (target == null)
 			{
-				helper.response(res, 'Olala il n''a pas encore utilisé de bangs, dites lui de dire /hi' );
+				helper.response(res, 'Olala il n\'a pas encore utilisé de bangs, dites lui de dire /hi' );
 				return;					
 			}
 
