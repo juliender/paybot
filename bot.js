@@ -15,18 +15,7 @@ exports.handleRequest = function (data, res) {
 			if(user == null)
 			{
 				var user = models.createUser(data.user_id, data.user_name, function(user){
-					helper.response(res, 'Bienvenue sur le Slack de la Tic Valley ! \n
-						Vous pouvez demander de l''aide et en donner dans les différents "Channels". \n
-						Le Bangs est la monnaie virtuelle de l''entraide à la tic valley ! \n
-						Pleins de cadeaux sont à gagner (Drone Parrot - balance withings etc...) pour les meilleurs contributeurs. \n
-						Comme vous êtes nouveaux nous vous créditons de 200 bangs !\n
-						\n
-						Voici la liste des différentes fonctions : \n
-						bangs 100 @bertran : Donne 100 bangs à bertran \n
-						/mybangs : Vous renvoie votre nombre de bangs \n
-						/allbangs : Renvoie le classement des bangs \n
-\n
-						Pour toutes questions contactez nous (sur slack hein ;-) ) @bertran @marion @julie @simon'  );
+					helper.response(res, 'Bienvenue sur le Slack de la Tic Valley ! \n Vous pouvez demander de l''aide et en donner dans les différents "Channels". \n Le Bangs est la monnaie virtuelle de l''entraide à la tic valley ! \n Pleins de cadeaux sont à gagner (Drone Parrot - balance withings etc...) pour les meilleurs contributeurs. \n Comme vous êtes nouveaux nous vous créditons de 200 bangs !\n \n Voici la liste des différentes fonctions : \n bangs 100 @bertran : Donne 100 bangs à bertran \n /mybangs : Vous renvoie votre nombre de bangs \n /allbangs : Renvoie le classement des bangs \n \n Pour toutes questions contactez nous (sur slack hein ;-) ) @bertran @marion @julie @simon'  );
 				});
 			}
 
