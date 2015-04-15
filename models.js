@@ -33,7 +33,7 @@ var OperationSchema = new mongoose.Schema({
 });
 
 var User = mongoose.model('User', UserSchema);
-var Operation = mongoose.model('Operation', UserSchema);
+var Operation = mongoose.model('Operation', OperationSchema);
 
 /*************************** EXPORTS ****************************/
 module.exports = {
