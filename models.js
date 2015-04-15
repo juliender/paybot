@@ -79,6 +79,9 @@ module.exports = {
   // Create and save the user in database
   createUser : function(slack_id, name, callback){
 
+      new Operation({ slack_id_sender: '', slack_id_receiver: slack_id, amount: 200  }).save();
+
+
       var user = new User({ slack_id: slack_id, name: name });
       user.save();
 

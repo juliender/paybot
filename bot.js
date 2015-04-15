@@ -58,19 +58,19 @@ exports.handleRequest = function (data, res) {
 
 			if (amount == null)
 			{
-				helper.response(res, 'This is not a right command, no amout in your message' );
+				helper.responseJson(res, 'This is not a right command, no amout in your message' );
 				return;					
 			}
 
 			if (target == null)
 			{
-				helper.response(res, 'Olala il n\'a pas encore utilisé de bangs, dites lui de dire /hi' );
+				helper.responseJson(res, 'Olala il n\'a pas encore utilisé de bangs, dites lui de dire /hi' );
 				return;					
 			}
 
 			if (data.command != null)
 			{
-				helper.response(res, ' C\'est bangs 100 @....  pas /bangs ' );
+				helper.responseJson(res, ' C\'est bangs 100 @....  pas /bangs ' );
 				return;					
 			}
 
@@ -78,7 +78,7 @@ exports.handleRequest = function (data, res) {
 
 				if (user_bank < amount)
 				{
-					helper.response(res, 'Tu as ' + user_bank + ' bangs. Pas assez pour envoyer ' + amount + ' !' );
+					helper.responseJson(res, 'Tu as ' + user_bank + ' bangs. Pas assez pour envoyer ' + amount + ' !' );
 					return;
 				}
 
@@ -92,7 +92,7 @@ exports.handleRequest = function (data, res) {
 							text += user.name +': ' + new_user_bank+ ' bangs\n';
 							text += target.name +': ' + target_bank+ ' bangs\n';
 
-							helper.response(res, text);
+							helper.responseJson(res, text);
 
 						});
 					});

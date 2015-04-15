@@ -3,6 +3,10 @@ var models = require('./models.js');
 module.exports = {
 
   response : function(res, text){
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    res.end( text );
+  },
+  responseJson : function(res, text){
     var responseBody = { text : text };
     res.writeHead(200, {'Content-Type': 'application/json'});
     res.end( JSON.stringify(responseBody) );
