@@ -70,6 +70,12 @@ module.exports = {
   },
 
 
+  // Create and save the transaction in database
+  newOperation : function(slack_id_sender, slack_id_receiver, amount, callback){
+        var op = new Operation({ slack_id_sender: slack_id_sender_, slack_id_receiver: slack_id_receiver_, amount: amount_  });
+        op.save(callback);
+  },
+
   // Create and save the user in database
   createUser : function(slack_id, name, callback){
 

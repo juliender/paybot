@@ -83,8 +83,7 @@ exports.handleRequest = function (data, res) {
 				}
 
 				// Finally save the bank operation in DB and display updated funds. 
-				var op = new models.Operation({ slack_id_sender: user.slack_id, slack_id_receiver: target.slack_id, amount: amount  });
-				op.save(function(){
+				models.newOperation(user.slack_id, target.slack_id, amount, function(){
 
 					models.processBank(user, function(new_user_bank){
 						models.processBank(target, function(target_bank){
