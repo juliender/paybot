@@ -16,7 +16,9 @@ In the "Integrations" settings of Slack :
 
 ## Configure Slack tokens in Heroku
 - heroku config set:SLACK_TOKEN=your_slack_webhook_token
-- heroku config set:SLACK_TOKEN_COMMAND=your_slack_command_token
+- heroku config set:SLACK_COMMAND_HI_TOKEN=your_slack_command_token
+- heroku config set:SLACK_COMMAND_MYBANGS_TOKEN=your_slack_command_token
+- heroku config set:SLACK_COMMAND_ALLBANGS_TOKEN=your_slack_command_token
 
 # How to use the bot
 
