@@ -9,6 +9,7 @@ var helper = require('./helper.js');
 // port 5000.
 var port = process.env.PORT || 5000;
 var slack_token = process.env.SLACK_TOKEN;
+var slack_token_command = process.env.SLACK_COMMAND_TOKEN;
 
 /***************** SERVER INIT ****************/
 http.createServer(function (req, res) {
@@ -24,7 +25,7 @@ http.createServer(function (req, res) {
       // parse the received body data
       var decodedBody = querystring.parse(fullBody);
 
-      if(decodedBody.token != slack_token)
+      if(decodedBody.token != slack_token && decodedBody.token != slack_token_command)
       {
         helper.response(res, ' Authentication error : wrong token ');
         return;
