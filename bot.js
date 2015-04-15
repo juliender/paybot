@@ -45,13 +45,6 @@ exports.handleRequest = function (data, res) {
 			return;
 		}
 
-		//If this is the slackbot talking and the message does not match the commands above : we are potentially catching the previous answer of the bot
-		//So display something only if the command is a valid transaction
-		var display_error = true;
-		if( data.user_id == 'USLACKBOT' )
-		{
-			display_error = false;
-		}
 
 		//Else : parse message to find transaction information : how much and for who.
 
@@ -62,44 +55,28 @@ exports.handleRequest = function (data, res) {
 			var amount = helper.findAmount(data.text);
 			amount = parseInt(amount);
 
-			var error = false;
+
 			if (amount == null)
 			{
-				error = true;
-				if(display_error)
-				{
-					helper.response(res, 'This is not a right command, no amout in your message' );
-					return;					
-				}
+				helper.response(res, 'This is not a right command, no amout in your message' );
+				return;					
 			}
 
 			if (target == null)
 			{
-				error = true;
-				if(display_error)
-				{
-					helper.response(res, 'Receiver does not exist or did not say " /bangs hi " ' );
-					return;					
-				}
+				helper.response(res, 'Receiver does not exist or did not say " /bangs hi " ' );
+				return;					
 			}
 
 			if (data.command != null)
 			{
-				error = true;
-				if(display_error)
-				{
-					helper.response(res, ' No slash for the message to be public ' );
-					return;					
-				}
+				helper.response(res, ' No slash for the message to be public ' );
+				return;					
 			}
 
-			//If we catched an error but still not displayed : this is a bot answer so return nothing 
-			if( error ) return;
-
-			// Else : process valid transaction
 			models.processBank(user, function(user_bank){
 
-				if (user_bank < amount && data.user_id != 'USLACKBOT')
+				if (user_bank < amount)
 				{
 					helper.response(res, 'You have ' + user_bank + ' bangs. Not enough to send ' + amount );
 					return;
@@ -113,8 +90,8 @@ exports.handleRequest = function (data, res) {
 						models.processBank(target, function(target_bank){
 
 							var text = amount + ' bangs sent to ' +target.name + ' !\n';
-							text += user.name +':' + new_user_bank+ ' bangs\n';
-							text += target.name +':' + target_bank+ ' bangs\n';
+							text += user.name +': ' + new_user_bank+ ' bangs\n';
+							text += target.name +': ' + target_bank+ ' bangs\n';
 
 							helper.response(res, text);
 

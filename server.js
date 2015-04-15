@@ -30,7 +30,10 @@ http.createServer(function (req, res) {
         return;
       }
 
-      bot.handleRequest(decodedBody, res);
+      if (decodedBody.user_id != 'USLACKBOT')
+      {
+        bot.handleRequest(decodedBody, res);
+      }
 
     });
 
